@@ -6,13 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
   <title>梨梨机器人</title>
   <!-- the docute client styles -->
-  <link rel="stylesheet" href="https://unpkg.com/docute/dist/docute.css">
+  <link rel="stylesheet" href="https://unpkg.com/docute@3/dist/docute.css">
 </head>
 <body>
   <div id="app"></div>
   <!-- load the docute client library -->
-  <script src="https://unpkg.com/docute/dist/docute.js"></script>
+  <script src="https://unpkg.com/docute@3/dist/docute.js"></script>
   <!-- bootstrap your docute app! -->
-  <script src="./main.js"></script>
+  <script>
+  docute.init({
+    nav: [
+      {title: '主页', path: '/'},
+      {title: '网关', path: '/Gateway'},
+      {title: '核心程序', path: '/Riri-2'},
+      {title: '命令控制器', path: '/Commander'},
+    ]
+  })
+  </script>
 </body>
 </html>
