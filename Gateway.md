@@ -45,23 +45,23 @@ Feature：
 
 回复给外界的消息
 
-- <- From: <ProgramName> // Whatever
+- <- From: [ProgramName] // Whatever
 - <- To: Telegram，QQ
 
 Bot 调用其他 Bot
 
-- <- From: <ProgramName>
-- <- To: <ProgramName>
+- <- From: [ProgramName]
+- <- To: [ProgramName]
 
 Bot 被其他 Bot 调用
 
-- -> From: <ProgramName>
-- -> To: <ProgramName>
+- -> From: [ProgramName]
+- -> To: [ProgramName]
 
 Bot 以伪装消息的形式触发其他 Bot
 
 - <- From: Telegram，QQ
-- <- To: <ProgramName>，（空）
+- <- To: [ProgramName]，（空）
 
 ### 结构化消息
 
