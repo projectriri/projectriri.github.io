@@ -36,7 +36,7 @@ Feature：
 
 ### 消息路由
 
-[![设计示意图](/GatewayDesign.jpg)](/GatewayDesign.pdf)
+[![设计示意图](/GatewayDesign.jpg)](https://projectriri.github.io/GatewayDesign.pdf)
 
 来自外界的消息
 
@@ -63,6 +63,21 @@ Bot 以伪装消息的形式触发其他 Bot
 - <- From: Telegram，QQ
 - <- To: [ProgramName]，（空）
 
+### 与 v1 版相比
+
+1. v1 相当于是只有图中 Mixed Proxy 这一条路径，这个方法因为它不是 HTTP，所以不能用已经有的 SDK。
+而因为重新实现 SDK 是很繁琐的，所以唯一的办法就是 fork 一个 SDK，修改它的底层实现（把 HTTP 换成 RPC，以及涉及到加头的操作），很麻烦，而且不同语言都需要重新实现。
+另一方面，消息中承载的内容又不统一，所以每次需要改两个 SDK，极其麻烦。
+v2 版中不再推荐 Mixed Proxy，而是额外地提供了 HTTP Proxy 和 Abstract Proxy。其中前者可以直接利用现有的 SDK，而后者则不需要考虑不同平台。
+这样在简化使用负担的同时，仍然能够很好地满足不同情景的使用需要。
+
+2. 增加了路由功能，这样使得旗下的不同程序能够互相调用。
+
+3. 改用了 gRPC，这个体验提升感觉比较有限，偷懒的话可以不做（但是能提高逼格）
+
+4. [Commander](/Commander) 虽然理论上是独立的程序，但是实现的时候可以和网关编译在一起。
+可以跟现在网关本身的 status 应答的部分结合在一起来完成。
+
 ### 结构化消息
 
 这是专门为了聊天而产生的消息
@@ -88,4 +103,3 @@ QQ 如何区分图片和 Sticker？
 Telegram 如何下载 Sticker？
 
 **暂时只支持文字，其他媒体用特殊文字如[图片]代替**
-
