@@ -78,6 +78,27 @@ v2 版中不再推荐 Mixed Proxy，而是额外地提供了 HTTP Proxy 和 Abst
 4. [Commander](/Commander) 虽然理论上是独立的程序，但是实现的时候可以和网关编译在一起。
 可以跟现在网关本身的 status 应答的部分结合在一起来完成。
 
+### Services
+
++ Telegram
+  - inbound: 从 Telegram 拉取长轮询消息
+  - outbound: 通过 Telegram HTTP API 发送消息
++ QQ
+  - inbound: 从 QQ WebHook 获得消息
+  - outbound: 通过 QQ HTTP API 发送消息
++ Telegram HTTP
+  - inbound: 通过 HTTP API 接受请求
+  - outbound: 通过长轮询提供消息
++ QQ HTTP
+  - inbound: 通过 HTTP API 接受请求
+  - outbound: 通过长轮询提供消息
++ QQ WebSocket
+  - inbound: 通过 WebSocket 接受请求
+  - outbound: 通过 WebSocket 提供消息
++ RPC:
+  - inbound: 通过 RPC 接受（原始/结构化）请求
+  - outbound: 通过 RPC 提供（原始/结构化）消息
+
 ### 结构化消息
 
 这是专门为了聊天而产生的消息
