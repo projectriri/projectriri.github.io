@@ -12,7 +12,7 @@ Feature：
 
 + √ 完全基于 Golang 实现
 + √ 支持 Telegram 和 QQ 两个平台，用户无须这两个平台的认证即可通过网关收发消息
-+ √ 理论上对 Telegram Bot API 和 CoolQ Http API 的绝大部分主要功能都支持
++ √ 理论上对 Telegram Bot API 和 CoolQ HTTP API 的绝大部分主要功能都支持
 + √ 基于 Golang 的通用性抽象，用户在特定情境下（如：回复文本消息）不需要关心具体平台
 + √ 使用 jsonrpc 作为通信协议，SDK 中有封装好的使用方法和自动重连功能
 + √ 采用长轮询的消息服务，并可以队列缓存一定量的消息。
@@ -29,9 +29,9 @@ Feature：
 Feature：
 
 + √ 仍然使用 Golang 实现
-+ √ 使用 gRPC 作为通信协议，设计通信文档
-+ √ 在 gRPC 之外同时提供 HTTP Proxy
-+ √ 抽象消息模型，建立自己的跨平台通用消息协议
++ √ 制定跨语言的 RPC 通信文档
++ √ 在 RPC 之外同时提供 HTTP Proxy
++ √ 抽象消息模型，建立自己的跨平台通用消息模型
 + √ 增加路由功能，BOT 可以选择 Accept 的消息类型，消息应答可以重新回到网关
 
 ### 消息路由
@@ -40,43 +40,33 @@ Feature：
 
 来自外界的消息
 
-- -> From：Telegram，QQ
-- -> To: （空）
+- IN From：Telegram，QQ
+- IN To: （空）
 
 回复给外界的消息
 
-- <- From: [ProgramName] // Whatever
-- <- To: Telegram，QQ
+- IN From: [ProgramName] // Whatever
+- IN To: Telegram，QQ
 
 Bot 调用其他 Bot
 
-- <- From: [ProgramName]
-- <- To: [ProgramName]
+- IN From: [ProgramName]
+- IN To: [ProgramName]
 
 Bot 被其他 Bot 调用
 
-- -> From: [ProgramName]
-- -> To: [ProgramName]
+- OUT From: [ProgramName]
+- OUT To: [ProgramName]
 
 Bot 以伪装消息的形式触发其他 Bot
 
-- <- From: Telegram，QQ
-- <- To: [ProgramName]，（空）
+- IN From: Telegram，QQ
+- IN To: [ProgramName]，（空）
 
-### 与 v1 版相比
+Bot 获取所有从网关发出的消息
 
-1. v1 相当于是只有图中 Mixed Proxy 这一条路径，这个方法因为它不是 HTTP，所以不能用已经有的 SDK。
-而因为重新实现 SDK 是很繁琐的，所以唯一的办法就是 fork 一个 SDK，修改它的底层实现（把 HTTP 换成 RPC，以及涉及到加头的操作），很麻烦，而且不同语言都需要重新实现。
-另一方面，消息中承载的内容又不统一，所以每次需要改两个 SDK，极其麻烦。
-v2 版中不再推荐 Mixed Proxy，而是额外地提供了 HTTP Proxy 和 Abstract Proxy（这个抽象以前是以 Golang SDK 在 SDK 那一层来提供，现在改成直接上报和接收通用的格式）。其中前者可以直接利用现有的 SDK，而后者则不需要考虑不同平台。
-这样在简化使用负担的同时，仍然能够很好地满足不同情景的使用需要。
-
-2. 增加了路由功能，这样使得旗下的不同程序能够互相调用。
-
-3. 改用了 gRPC，这个体验提升感觉比较有限，偷懒的话可以不做（但是能提高逼格）
-
-4. [Commander](/Commander) 虽然理论上是独立的程序，但是实现的时候可以和网关编译在一起。
-可以跟现在网关本身的 status 应答的部分结合在一起来完成。
+- OUT From: （空）
+- OUT To: Telegram，QQ
 
 ### Services
 
@@ -98,6 +88,26 @@ v2 版中不再推荐 Mixed Proxy，而是额外地提供了 HTTP Proxy 和 Abst
 + RPC:
   - inbound: 通过 RPC 接受（原始/结构化）请求
   - outbound: 通过 RPC 提供（原始/结构化）消息
+
+### 与 v1 版相比
+
+1. v1 相当于是只有图中 Mixed Proxy 这一条路径，这个方法因为它不是 HTTP，所以不能用已经有的 SDK。
+而因为重新实现 SDK 是很繁琐的，所以唯一的办法就是 fork 一个 SDK，修改它的底层实现（把 HTTP 换成 RPC，以及涉及到加头的操作），很麻烦，而且不同语言都需要重新实现。
+另一方面，消息中承载的内容又不统一，所以每次需要改两个 SDK，极其麻烦。
+v2 版中不再推荐 Mixed Proxy，而是额外地提供了 HTTP Proxy 和 Abstract Proxy（这个抽象以前是以 Golang SDK 在 SDK 那一层来提供，现在改成直接上报和接收通用的格式）。其中前者可以直接利用现有的 SDK，而后者则不需要考虑不同平台。
+这样在简化使用负担的同时，仍然能够很好地满足不同情景的使用需要。
+
+2. 增加了路由功能，这样使得旗下的不同程序能够互相调用。
+
+3. [Commander](/Commander) 虽然理论上是独立的程序，但是实现的时候可以和网关编译在一起。
+可以跟现在网关本身的 status 应答的部分结合在一起来完成。
+
+### ※ 讨论 RPC 协议
+
+是否要更换 jsonrpc 为 gRPC 或 Thrift 或其他 rpc？
+
++ [5 Reasons to Use Protocol Buffers Instead of JSON For Your Next Service](https://codeclimate.com/blog/choose-protocol-buffers/)
++ [流行的rpc框架benchmark 2018新春版](http://colobu.com/2018/01/31/benchmark-2018-spring-of-popular-rpc-frameworks/)
 
 ### 结构化消息
 
