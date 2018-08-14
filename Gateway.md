@@ -99,7 +99,7 @@ v2 版中不再推荐 Mixed Proxy，而是额外地提供了 HTTP Proxy 和 Abst
 
 2. 增加了路由功能，这样使得旗下的不同程序能够互相调用。
 
-3. [Commander](/Commander) 虽然理论上是独立的程序，但是实现的时候可以和网关编译在一起。
+3. 命令控制器虽然理论上是独立的程序，但是实现的时候可以和网关编译在一起。
 可以跟现在网关本身的 status 应答的部分结合在一起来完成。
 
 ### ※ 讨论 RPC 协议
@@ -125,7 +125,7 @@ v2 版中不再推荐 Mixed Proxy，而是额外地提供了 HTTP Proxy 和 Abst
 
 1. Telegram 如何发送贴纸（源自文件）？QQ 的贴纸就是图片，然而 Telegram 的贴纸需要 Sticker ID。如何通过已有的图片文件直接发送贴纸？**Webp 格式可以么？**
 
-2. Markdown 格式怎么处理？**一律不适用 Markdown 排版（即使是 Telegram）**
+2. Markdown 格式怎么处理？**一律不使用 Markdown 排版（即使是 Telegram）**
 
 **收到的消息**
 
@@ -134,3 +134,72 @@ QQ 如何区分图片和 Sticker？
 Telegram 如何下载 Sticker？
 
 **暂时只支持文字，其他媒体用特殊文字如[图片]代替**
+
+## 原则
+
+小恶魔网关的解决方案是为了方便 BOT 跨聊天平台，并且提供各程序模块相互调用的统一方法。
+**虽然分为不同的程序，它们仍然是同一个 BOT：**网关后的程序之间紧密联系，需要互相依赖，才能共同提供作为一个 BOT 的功能。
+
+网关本身并不是为了服务不同独立的 BOT，关于如何在同一个 BOT 账号下运行不同的 BOT，
+在项目 [Telegram Bot Gateway](https://gitlab.com/FiveYellowMice/telegram-bot-gateway) 中有所讨论。
+其中涉及到如何注册一个 BOT，命令触发时弹出选择键盘，如何把一个 BOT 拉入群组，怎么处理对 BOT 的 At 消息等。
+小恶魔梨梨不解决上面的这些问题，因为 Telegram Bot Gateway 旨在提供一个透明代理，小恶魔梨梨也可以在 Telegram Bot Gateway 后面运行。
+
+## 命令控制器
+
+原来的梨梨在一些很多程序都响应的命令触发的时候会刷屏，如 ping，三个程序都会响应，一下回复 3 条消息。
+
+新版梨梨独立出命令控制程序，将原来的 v1 梨梨核心程序拆分成命令控制器和春歌服务程序。
+
+通过新版小恶魔网关，命令控制器和星野版梨梨可以调用春歌版梨梨。
+
+以前：
+
+```
+ping -> {  
+  ritorudemonriri: Pong!
+  riri-naive: Pong!
+  yt2nd: Pong!
+}
+```
+
+以后：
+
+```
+ping -> commander -> "ping!" -> 
+gateway -> {  
+  ritorudemonriri: Pong!
+  riri-naive: Pong!
+  yt2nd: Pong!
+} -> gateway -> commander -> {
+  Pong!
+  edited: Pong!, Pong!
+  edited: Pong!, Pong!, Pong!
+}
+```
+
+### 工作方式
+
+命令控制器接收所有会话消息，对于所有命令，发送“命令”的消息给网关。
+
+其他程序收到“命令”消息，可以直接向 Telegram、QQ 发送回复（如程序特有的一些命令），也可以向命令控制器回复。
+
+命令控制器收到回复后，向 Telegram、QQ 回复。
+
+只对于一些特殊命令，命令控制器才有针对的方法去集合各程序的回复：
+
+- ping
+- version
+- changelog
+- status
+- help
+
+同时命令控制器应该能够接受用于指定程序的参数，来路由命令。
+
+### 问题
+
+※ QQ 不支持消息编辑
+
+解决方案1：保持原来不变，每条响应都推一条消息。
+
+解决方案2：先发送一个响应（正在ping...），然后设置一个等待时间（如5秒），到时间了再推送结果。
