@@ -14,18 +14,34 @@
 + 和梨子兼容运行，以梨子的口吻帮助梨子回复某些消息（对外不显示其存在）
 + 完全取代梨子，使梨子能够随心所欲地从社交网络中断开（而不被外界察觉）
 
-这个是从 2018 年 5 月开始挖的坑。
+这个是从 2018 年 5 月开始的企划。
 
 这个项目应该不会轻易地死掉（例如不再有需求了或者已经有别人实现好了）。
 但是要实现其目标大概要花费很久。
 
-## 项目成果
+## 致读者
+
+这个企划要暂时中止了。
+
+因为我发现，要运用机器学习来构建一个生产环境系统（在线，实时）是一件十分复杂的事情。
+而我这既没数据，也没有机器学习的算法能力，也没有搭建一个线上 AI 服务的经验。
+
+我觉得我还是先去找些已知的庞大 NLP 数据集，学习一些模型和实践。等羽翼丰满了再回来重拾这个可能吧。
+
+最初的最初，我做了一个自动问早午晚安的程序。
+它有十几条模板，问候的时间也在一定范围内是随机的。
+
+但是后来我发现，大家很快就发现这是机器人。很多人即使订阅了也从来不会回复。
+
+这种程度的机器，终归取代不了人类。
+
+## 相关的仓库（坑）
 
 ### [小恶魔机器人网关](https://projectriri.github.io/bot-gateway) 
   
   [![Status](https://img.shields.io/badge/status-beta-green.svg)](https://projectriri.github.io/bot-gateway)
   [![GitHub last commit](https://img.shields.io/github/last-commit/projectriri/bot-gateway.svg)](https://github.com/projectriri/bot-gateway)  
-  用于服务多种 Bot 平台的统一 API 网关，已经在公测了喵！  
+  用于服务多种 Bot 平台的统一 API 网关，网关下的应用可以通过相同的 API 收发不同平台的消息。
   使用 Go 编写，支持直接 Go 的插件或通过协议使用。  
   详见链接中的文档。
 
@@ -40,10 +56,9 @@
 
   未来打算结合一些 LoveLive! SIF 中的语音和歌曲来用。有关细节仍在设计中。
 
-### [春风 MP3 裁剪工具](https://github.com/projectriri/harukaze)
+### 春风 MP3 裁剪工具
 
-  [![Status](https://img.shields.io/badge/status-in%20design-ff69b4.svg)](https://github.com/projectriri/harukaze)
-  [![GitHub last commit](https://img.shields.io/github/last-commit/projectriri/harukaze.svg)](https://github.com/projectriri/harukaze)  
+  [![Status](https://img.shields.io/badge/status-in%20design-ff69b4.svg)](#)
   这个工具虽然计划了很久，但是到现在还没有真正开始写。  
   春风是用来裁剪春歌的。期望可以通过导入 LRC 歌词来把歌曲裁剪成一句一句的，这样就可以在消息中发了。  
   需要一个好用的前端来支持导入后微调。裁剪可以用 ffmepg。
@@ -57,15 +72,14 @@
   
 ### [复读姬](https://github.com/projectriri/repeatress)
 
-  [![Status](https://img.shields.io/badge/staus-in%20active%20dev-%23ffae52.svg)](https://github.com/projectriri/repeatress)
-  [![GitHub last commit](https://img.shields.io/github/last-commit/projectriri/repeatress.svg)](https://github.com/projectriri/repeatress)  
+  [![Status](https://img.shields.io/badge/status-in%20design-ff69b4.svg)](#) 
   写 Bot 的人在不知道写什么的时候总是想做一个复读姬。  
-  但是这个复读姬不一样。这个复读姬的目的不是复读，而是像人类一样复读。  
-  使用 Python 编写，后端使用 [Firestore](https://firebase.google.com/docs/firestore/)（是一个类似 MongoDB 的文档数据库）。
+  但是这个复读姬不一样。这个复读姬的目的不是复读，而是像人类一样复读。
+  它通过观察群友复读什么，来预测什么时候应该复读。
   
 ### [星野服务程序](#)
 
-  [![Status](https://img.shields.io/badge/status-in%20design-ff69b4.svg)](#)  
+  [![Status](https://img.shields.io/badge/status-in%20design-ff69b4.svg)](#)
   星野服务程序是梨梨的主进程。用于决定梨梨应当在什么时间，什么聊天中发言。  
   完全没有想好该怎么写。
   
@@ -96,8 +110,8 @@
 
 1. 直接 [编辑](https://github.com/projectriri/projectriri.github.io/new/master) 本文档或发起 [Issue](https://github.com/projectriri/projectriri.github.io/issues/new) 来讨论。
 2. 编写代码。
-3. 调戏梨梨。
-4. 贡献你的计算资源。
+3. ~~调戏梨梨~~（梨梨[自闭](#致读者)了）。
+4. ~~贡献你的计算资源~~（还没到时候）。
 
 ## 关于本文档
 
